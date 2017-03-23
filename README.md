@@ -1,2 +1,1 @@
-# mc
-Moot Court Scheduling App
+SVSU First Robotics Volunteer Management System
