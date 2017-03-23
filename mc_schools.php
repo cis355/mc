@@ -1,21 +1,10 @@
 <?php 
 /* ---------------------------------------------------------------------------
- * filename    : mc_teams.php
+ * filename    : mc_schools.php
  * author      : George Corser, gcorser@gmail.com
- * description : This program displays a list of moot court teams and
- *               their competitors for round1, round2 and round3
+ * description : This program displays a list of schools
  * ---------------------------------------------------------------------------
  */
-
-/*
-session_start();
-if(!isset($_SESSION["fr_person_id"])){ // if "user" not set,
-	session_destroy();
-	header('Location: login.php');   // go to login page
-	exit;
-}
-
-*/
 ?>
 
 <!DOCTYPE html>
@@ -40,14 +29,14 @@ if(!isset($_SESSION["fr_person_id"])){ // if "user" not set,
 		<!-- Display title of screen -->
 		
 		<div class="row">
-			<h3>Teams/Rounds</h3>
+			<h3>Schools</h3>
 		</div>
 		
 		<!-- Display menu bar links: Create, Logout, Teams/Rounds, Schools, Classrooms -->
 
 		<div class="row">
 			<p>
-				<a href="mc_team_create.php" class="btn btn-primary">Add Team</a>
+				<a href="mc_school_create.php" class="btn btn-primary">Add School</a>
 				<a href="logout.php" class="btn btn-warning">Logout</a> &nbsp;&nbsp;&nbsp;
 				<a href="mc_teams.php">Teams/Rounds</a> &nbsp;
 				<a href="mc_schools.php">Schools</a> &nbsp;
@@ -59,11 +48,7 @@ if(!isset($_SESSION["fr_person_id"])){ // if "user" not set,
 			<table class="table table-striped table-bordered" style="background-color: lightgrey !important">
 				<thead>
 					<tr>
-						<th>Team</th>
 						<th>School</th>
-						<th>Round1</th>
-						<th>Round2</th>
-						<th>Round3</th>
 						<th>Action</th>
 					</tr>
 				</thead>
@@ -71,22 +56,17 @@ if(!isset($_SESSION["fr_person_id"])){ // if "user" not set,
 				<?php
 					include '../database/database.php';
 					$pdo = Database::connect();
-					$sql = "SELECT * FROM mc_teams, mc_schools WHERE team_school = mc_schools.id ORDER BY team_name";
+					$sql = "SELECT * FROM mc_schools ORDER BY school_name ASC";
 
 					foreach ($pdo->query($sql) as $row) {
 						echo '<tr>';
-						echo '<td>'. $row['team_name'] . ' (team' . $row[0] . ')' . '</td>';
 						echo '<td>'. $row['school_name'] . '</td>';
-						echo '<td>'. $row['classroom1'] . ' - ' . $row['side1'] . ' - ' . $row['competitor1'] . '</td>';
-						echo '<td>'. $row['classroom2'] . ' - ' . $row['side2'] . ' - ' . $row['competitor2'] . '</td>';
-						echo '<td>'. $row['classroom3'] . ' - ' . $row['side3'] . ' - ' . $row['competitor3'] . '</td>';
-
 						echo '<td width=250>';
 						// Read function not needed
-						// echo '<a class="btn" href="mc_team_read.php?id='.$row[0].'">Read</a>';
-						echo '<a class="btn btn-success" href="mc_team_update.php?id='.$row[0].'">Update</a>';
-						echo '<a class="btn btn-danger" href="mc_team_delete.php?id='.$row[0].'">Delete</a>';
-
+						// echo '<a class="btn" href="mc_school_read.php?id='.$row[0].'">Read</a>';
+						echo '<a class="btn btn-success" href="mc_school_update.php?id='.$row[0].'">Update</a>';
+						// delete not allowed
+						//echo '<a class="btn btn-danger" href="mc_school_delete.php?id='.$row[0].'">Delete</a>';
 						echo '</td>';
 						echo '</tr>';
 					}
