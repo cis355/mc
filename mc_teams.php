@@ -6,16 +6,9 @@
  *               their competitors for round1, round2 and round3
  * ---------------------------------------------------------------------------
  */
-
-/*
-session_start();
-if(!isset($_SESSION["fr_person_id"])){ // if "user" not set,
-	session_destroy();
-	header('Location: login.php');   // go to login page
-	exit;
-}
-
-*/
+define("Pet",1);
+define("Resp",2);
+define("NOT-SET",0);
 ?>
 
 <!DOCTYPE html>
@@ -47,11 +40,12 @@ if(!isset($_SESSION["fr_person_id"])){ // if "user" not set,
 
 		<div class="row">
 			<p>
-				<a href="mc_team_create.php" class="btn btn-primary">Add Team</a>
+				<a href="mc_team_create.php" class="btn btn-primary">Add New Team</a>
 				<a href="logout.php" class="btn btn-warning">Logout</a> &nbsp;&nbsp;&nbsp;
-				<a href="mc_teams.php">Teams/Rounds</a> &nbsp;
-				<a href="mc_schools.php">Schools</a> &nbsp;
+				<a href="mc_teams.php">TeamsList</a> &nbsp;
+				<a href="mc_schools.php">SchoolsList</a> &nbsp;
 				<a href="mc_compute_rounds.php" class="btn btn-primary">Compute Rounds</a>
+				<a href="mc_clear_rounds.php" class="btn btn-danger">Clear Rounds</a>
 			</p>
 			
 			<!-- Display html table list of teams and rounds -->
@@ -59,11 +53,12 @@ if(!isset($_SESSION["fr_person_id"])){ // if "user" not set,
 			<table class="table table-striped table-bordered" style="background-color: lightgrey !important">
 				<thead>
 					<tr>
-						<th>Team</th>
+						<th>No</th>
+						<th>Team Name</th>
 						<th>School</th>
 						<th>Round1</th>
 						<th>Round2</th>
-						<th>Round3</th>
+						<th>Round3</th> 
 						<th>Action</th>
 					</tr>
 				</thead>
@@ -71,29 +66,45 @@ if(!isset($_SESSION["fr_person_id"])){ // if "user" not set,
 				<?php
 					include '../database/database.php';
 					$pdo = Database::connect();
-					$sql = "SELECT * FROM mc_teams, mc_schools WHERE team_school = mc_schools.id ORDER BY team_name";
+					$sql = "SELECT * FROM mc_teams, mc_schools WHERE team_school = mc_schools.id ORDER BY mc_teams.team_number";
 
 					foreach ($pdo->query($sql) as $row) {
-						echo '<tr>';
-						echo '<td>'. $row['team_name'] . ' (team' . $row[0] . ')' . '</td>';
-						echo '<td>'. $row['school_name'] . '</td>';
-						echo '<td>'. $row['classroom1'] . ' - ' . $row['side1'] . ' - ' . $row['competitor1'] . '</td>';
-						echo '<td>'. $row['classroom2'] . ' - ' . $row['side2'] . ' - ' . $row['competitor2'] . '</td>';
-						echo '<td>'. $row['classroom3'] . ' - ' . $row['side3'] . ' - ' . $row['competitor3'] . '</td>';
 
-						echo '<td width=250>';
-						// Read function not needed
+						echo '<tr>';
+						//echo '<td>' . $row[0] .'</td>';
+						echo '<td>' . $row['team_number'] .'</td>';
+						echo '<td>' . $row['team_name'] .'</td>';
+						echo '<td>' . $row['school_name'] .'</td>';
+						
+						// round1
+						if ($row['side1']!=0) echo '<td>room'. $row['classroom1'] . ' - ' . (Pet==$row['side1'] ? "Pet" : "Resp") . ' - x:' . $row['team_number1'] . '</td>';
+						else echo '<td>room'. $row['classroom1'] . ' - ' . 'NOT-SET' . ' - x:' . $row['team_number1'] . '</td>';
+						
+						// round2
+						if ($row['side2']!=0) echo '<td>room'. $row['classroom2'] . ' - ' . (Pet==$row['side2'] ? "Pet" : "Resp") . ' - x:' . $row['team_number2'] . '</td>';
+						else echo '<td>room'. $row['classroom2'] . ' - ' . 'NOT-SET' . ' - x:' . $row['team_number2'] . '</td>';
+						
+						// round 3: list side3 as "FLIP"
+						if ($row['side3']!=0) echo '<td>room'. $row['classroom3'] . ' - ' . 'FLIP' . ' - x:' . $row['team_number3'] . '</td>';
+						else echo '<td>room'. $row['classroom3'] . ' - ' . 'NOT-SET' . ' - x:' . $row['team_number3'] . '</td>';
+
+						echo '<td>';
+						// Read function not needed. All info appears in menu list.
 						// echo '<a class="btn" href="mc_team_read.php?id='.$row[0].'">Read</a>';
 						echo '<a class="btn btn-success" href="mc_team_update.php?id='.$row[0].'">Update</a>';
 						echo '<a class="btn btn-danger" href="mc_team_delete.php?id='.$row[0].'">Delete</a>';
 
 						echo '</td>';
 						echo '</tr>';
-					}
+
+					} // end: foreach
+
 					Database::disconnect();
 				?>
 				</tbody>
+				
 			</table>
+			<p>* Note: If you see a zero (0) in the first column, then you must click "compute rounds" to renumber the teams.</p>
     	</div>
 
     </div> <!-- end div: class="container" -->
