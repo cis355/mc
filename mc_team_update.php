@@ -8,6 +8,7 @@
 
 require '../database/database.php';
 require 'functions.php';
+functions::requireSession();
 
 $id = $_GET['id'];
 
@@ -37,17 +38,17 @@ if ( !empty($_POST)) { // if $_POST filled then process the form
 	if ($valid) { // if valid user input update the database
 		$pdo = Database::connect();
 		$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-		$sql = "UPDATE mc_teams set team_name = ?, team_school = ? WHERE id = ?";
+		$sql = "UPDATE mc_teams set team_name = ?, team_school = ?, user = ? WHERE id = ?";
 		$q = $pdo->prepare($sql);
-		$q->execute(array($team,$school,$id));
+		$q->execute(array($team,$school,$_SESSION['session_id'],$id));
 		Database::disconnect();
 		header("Location: mc_teams.php");
 	}
 } else { // if $_POST NOT filled then pre-populate the form
 	$pdo = Database::connect();
 	$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-	$sql = "SELECT * FROM mc_teams where id = ?";
-	$q = $pdo->prepare($sql);
+	$sql = "SELECT * FROM mc_teams WHERE id = ? AND user = ?";
+	$q = $pdo->prepare($sql,$_SESSION['session_id']);
 	$q->execute(array($id));
 	$data = $q->fetch(PDO::FETCH_ASSOC);
 	$team = $data['team_name'];

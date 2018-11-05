@@ -8,6 +8,7 @@
 
 require '../database/database.php';
 require 'functions.php';
+functions::requireSession();
 
 if ( !empty($_POST)) { // if user entered data...
 
@@ -31,14 +32,14 @@ if ( !empty($_POST)) { // if user entered data...
 		$schoolError = 'Please choose a school';
 		$valid = false;
 	} 
-		
+    
 	// insert data...
 	if ($valid) {
 		$pdo = Database::connect();
 		$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-		$sql = "INSERT INTO mc_teams (team_name,team_school) values(?, ?)";
+		$sql = "INSERT INTO mc_teams (team_name,team_school,user) values(?, ?, ?)";
 		$q = $pdo->prepare($sql);
-		$q->execute(array($team,$school));
+		$q->execute(array($team,$school,$_SESSION['session_id']));
 		Database::disconnect();
 		header("Location: mc_teams.php"); // ...and return to menu/list
 	}
@@ -91,7 +92,7 @@ if ( !empty($_POST)) { // if user entered data...
 					<div class="controls">
 						<?php
 							$pdo = Database::connect();
-							$sql = 'SELECT * FROM mc_schools ORDER BY school_name ASC';
+							$sql = 'SELECT * FROM mc_schools WHERE user = '.$_SESSION['session_id'].' ORDER BY school_name ASC';
 							echo "<select class='form-control' name='school' id='school_id'>";
 							foreach ($pdo->query($sql) as $row) {
 								echo "<option value='" . $row['id'] . " '> " . $row['school_name'] . "</option>";

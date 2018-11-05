@@ -8,6 +8,7 @@
 
 require '../database/database.php';
 require 'functions.php';
+functions::requireSession();
 
 $id = $_GET['id'];
 
@@ -18,9 +19,9 @@ if ( !empty($_POST)) { // if user clicks "yes" (sure to delete), delete record
 	// delete data
 	$pdo = Database::connect();
 	$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-	$sql = "DELETE FROM mc_teams  WHERE id = ?";
+	$sql = "DELETE FROM mc_teams WHERE id = ? AND user = ?";
 	$q = $pdo->prepare($sql);
-	$q->execute(array($id));
+	$q->execute(array($id,$_SESSION['session_id']));
 	Database::disconnect();
 	header("Location: mc_teams.php");
 } 
