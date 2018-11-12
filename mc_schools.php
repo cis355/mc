@@ -5,6 +5,8 @@
  * description : This program displays a list of schools
  * ---------------------------------------------------------------------------
  */
+require 'functions.php';
+functions::requireSession();
 ?>
 
 <!DOCTYPE html>
@@ -21,10 +23,7 @@
 	
 		<!-- display logo at top of screen -->
 		
-		<?php 
-			include 'functions.php';
-			functions::logoDisplay2();
-		?>
+		<?php functions::logoDisplay2(); ?>
 		
 		<!-- Display title of screen -->
 		
@@ -59,7 +58,7 @@
 					$pdo = Database::connect();
 					//$sql = "SELECT * FROM mc_schools ORDER BY school_name ASC";
 					// do not allow delete if countTeams > 0
-					$sql = 'SELECT `mc_schools`.*, COUNT(`mc_teams`.`team_name`) AS countTeams FROM `mc_schools` LEFT OUTER JOIN `mc_teams` ON (`mc_schools`.`id`=`mc_teams`.`team_school`) GROUP BY `mc_schools`.`id` ORDER BY `mc_schools`.`school_name` ASC';
+					$sql = 'SELECT `mc_schools`.*, COUNT(`mc_teams`.`team_name`) AS countTeams FROM `mc_schools` LEFT OUTER JOIN `mc_teams` ON (`mc_schools`.`id`=`mc_teams`.`team_school`) WHERE `mc_schools`.`user` = '.$_SESSION['session_id'].' GROUP BY `mc_schools`.`id` ORDER BY `mc_schools`.`school_name` ASC';
 					foreach ($pdo->query($sql) as $row) {
 						echo '<tr>';
 						echo '<td>'. $row['school_name'] . '</td>';

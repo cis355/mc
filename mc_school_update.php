@@ -8,6 +8,7 @@
 
 require '../database/database.php';
 require 'functions.php';
+functions::requireSession();
 
 $id = $_GET['id'];
 
@@ -31,9 +32,9 @@ if ( !empty($_POST)) { // if $_POST filled then process the form
 	if ($valid) { // if valid user input update the database
 		$pdo = Database::connect();
 		$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-		$sql = "UPDATE mc_schools set school_name = ? WHERE id = ?";
+		$sql = "UPDATE mc_schools set school_name = ? WHERE id = ? and user = ?";
 		$q = $pdo->prepare($sql);
-		$q->execute(array($school,$id));
+		$q->execute(array($school,$id,$_SESSION['session_id']));
 		Database::disconnect();
 		header("Location: mc_schools.php");
 	}

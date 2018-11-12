@@ -8,6 +8,7 @@
 
 require '../database/database.php';
 require 'functions.php';
+functions::requireSession();
 
 if ( !empty($_POST)) { // if user entered data...
 
@@ -30,9 +31,9 @@ if ( !empty($_POST)) { // if user entered data...
 	if ($valid) {
 		$pdo = Database::connect();
 		$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-		$sql = "INSERT INTO mc_schools (school_name) values(?)";
+		$sql = "INSERT INTO mc_schools (school_name, user) values(?,?)";
 		$q = $pdo->prepare($sql);
-		$q->execute(array($school));
+		$q->execute(array($school,$_SESSION['session_id']));
 		Database::disconnect();
 		header("Location: mc_schools.php"); // ...and return to menu/list
 	}

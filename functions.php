@@ -38,16 +38,25 @@ class Functions {
 	
 	//function that will display the svsu logo on each page
 	//logo css added to the bootstrap css
-	public function logoDisplay() {
+	public static function logoDisplay() {
 		echo '<div> ';
 		echo '<img src="img/svsulogo.png" width="50%" class="logo" alt="SVSU logo"/>';
 		echo '</div>';
 	}
 	
-	public function logoDisplay2() {
+	public static function logoDisplay2() {
 		echo '<div> ';
 		echo '<img src="img/svsulogo.png" width="50%" class="logo2" alt="SVSU logo"/>';
 		echo '</div>';
 	}
+    
+    public static function requireSession() {
+        session_start();
+        if(!isset($_SESSION['session_id'])) {
+            session_destroy();
+            header("Location: login.php");
+            exit();
+        }
+    }
 } // end class: Functions
 ?>

@@ -6,19 +6,24 @@ define("PRO",1);
 define("CON",2);
 define("NOT-SET",0);
 include '../database/database.php';
+
+require 'functions.php';
+functions::requireSession();
+
 $teamcount = 0;
 $teams = array();
-$sql = "SELECT * FROM mc_teams ORDER BY id";
+$sql = "SELECT * FROM mc_teams WHERE user = ".$_SESSION['session_id']." ORDER BY id";
 compute_rounds();
 $hashTimes = 50;
 for($i=0; $i<$hashTimes; $i++) {
 	if(teamsHasZeros()) {
-		$sql = "SELECT * FROM mc_teams ORDER BY " . md5string($i);
+		$sql = "SELECT * FROM mc_teams WHERE user = ".$_SESSION['session_id']." ORDER BY " . md5string($i);
 		compute_rounds();
 	}
 }
 
 if(teamsHasZeros()) {
+    echo $sql . "</br>";
 	echo "Error: not all teams were set."; 
 	exit();
 }

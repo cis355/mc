@@ -6,6 +6,10 @@
  * ---------------------------------------------------------------------------
  */
 
+ /*
+    NOTE: the original file was just a copy of first robotics login page.
+ */
+ 
 // Start or resume session, and create: $_SESSION[] array
 session_start(); 
 
@@ -14,24 +18,22 @@ require '../database/database.php';
 if ( !empty($_POST)) { // if $_POST filled then process the form
 
 	// initialize $_POST variables
-	$username = $_POST['username']; // username is email address
+	$username = $_POST['username'];
 	$password = $_POST['password'];
 		
 	// verify the username/password
 	$pdo = Database::connect();
 	$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-	$sql = "SELECT * FROM fr_persons WHERE email = ? AND password = ? LIMIT 1";
+	$sql = "SELECT * FROM mc_users WHERE email = ? AND password = ? LIMIT 1";
 	$q = $pdo->prepare($sql);
-	$q->execute(array($username,$password));
+	$q->execute(array($username,md5($password)));
 	$data = $q->fetch(PDO::FETCH_ASSOC);
 	
 	if($data) { // if successful login set session variables
-		echo "success!";
-		$_SESSION['fr_person_id'] = $data['id'];
-		$sessionid = $data['id'];
-		$_SESSION['fr_person_title'] = $data['title'];
+        session_start();
+		$_SESSION['session_id'] = $data['id'];
 		Database::disconnect();
-		header("Location: fr_assignments.php?id=$sessionid ");
+		header("Location: mc_teams.php");
 	}
 	else { // otherwise go to login error page
 		Database::disconnect();
@@ -61,7 +63,7 @@ if ( !empty($_POST)) { // if $_POST filled then process the form
 			</div>
 		
 			<div class="row">
-				<h3>Volunteer Login</h3>
+				<h3>Login</h3>
 			</div>
 	
 			<form class="form-horizontal" action="login.php" method="post">
@@ -69,7 +71,7 @@ if ( !empty($_POST)) { // if $_POST filled then process the form
 				<div class="control-group">
 					<label class="control-label">Username (Email)</label>
 					<div class="controls">
-						<input name="username" type="text"  placeholder="me@email.com (all lower case)" required>
+						<input name="username" type="text"  placeholder="me@email.com" required>
 					</div>	<!-- end div: class="controls" -->
 				</div> <!-- end div class="control-group" -->
 				
@@ -83,7 +85,7 @@ if ( !empty($_POST)) { // if $_POST filled then process the form
 				<div class="form-actions">
 					<button type="submit" class="btn btn-success">Sign in</button>
 					&nbsp; &nbsp;
-					<a class="btn btn-primary" href="fr_per_create2.php">Join (New Volunteer)</a>
+					<a class="btn btn-primary" href="mc_user.php">Join</a>
 				</div>
 				
 			</form>

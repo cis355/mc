@@ -9,6 +9,8 @@
 define("Pet",1);
 define("Resp",2);
 define("NOT-SET",0);
+include 'functions.php';
+functions::requireSession();
 ?>
 
 <!DOCTYPE html>
@@ -25,10 +27,7 @@ define("NOT-SET",0);
 	
 		<!-- display logo at top of screen -->
 		
-		<?php 
-			include 'functions.php';
-			functions::logoDisplay2();
-		?>
+		<?php functions::logoDisplay2(); ?>
 		
 		<!-- Display title of screen -->
 		
@@ -66,7 +65,7 @@ define("NOT-SET",0);
 				<?php
 					include '../database/database.php';
 					$pdo = Database::connect();
-					$sql = "SELECT * FROM mc_teams, mc_schools WHERE team_school = mc_schools.id ORDER BY mc_teams.team_number";
+					$sql = "SELECT * FROM mc_teams, mc_schools WHERE team_school = mc_schools.id AND  mc_schools.user = ".$_SESSION['session_id']." ORDER BY mc_teams.team_number";
 
 					foreach ($pdo->query($sql) as $row) {
 
